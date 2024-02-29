@@ -60,7 +60,7 @@ class FormBuilder {
     var self = this;
     spreadSheet.getSheets().forEach(function (sheet) {
       var sectionName = sheet.getName();
-      var section;
+      var section = null;
       if (sheet_i > 0) {
         section = self._targetForm.addPageBreakItem();
         section.setTitle(sectionName);
@@ -80,15 +80,25 @@ class FormBuilder {
           if (row[0].match(/^[ \t]*\/\//)) {
             // Ignore the row
           } else if (row[0] == "TITLE") {
-            section.setTitle(row[1]);
+            if (section) {
+              section.setTitle(row[1]);
+            } else {
+              self._targetForm.setTitle(row[1]);
+            }
           } else if (row[0] == "DESCRIPTION") {
-            section.setHelpText(row[1]);
+            if (section) {
+              section.setHelpText(row[1]);
+            } else {
+              self._targetForm.setDescription(row[1]);
+            }
           } else if (row[0] == "QUESTION") {
             question = row[1];
           } else if (row[0] == "CHOICE") {
             options.push([row[1], row[3]]);
           } else if (row[0] == "GOTO") {
             sectionDestination = row[1];
+          } else if (row[0] == "CONFIRMATION") {
+            self._targetForm.setConfirmationMessage(row[1]);
           }
         } else if (question != "") { // End of options
           self._createQuestion(question, options);
