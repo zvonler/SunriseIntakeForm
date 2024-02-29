@@ -28,7 +28,7 @@ should be considered a shortcoming of the generation script and/or the source
 Sheets document, and reported as an issue to the developer. Any manual changes
 would only persist until the next time the generator script is run.
 
-# Sheets document syntax
+# Sheets document setup
 
 The Sheets document must be organized correctly for the generator script to work
 properly.
@@ -45,14 +45,27 @@ The contents of each tab are interpreted by the script line-by-line, starting
 from the top row and working down.
 
 For each row:
-  i. If the first column is not empty, the row is either a new question or a GOTO:
-    a. If the first column cell contents start with "GOTO", then the rest of the
-       cell should the name of a tab (section) that the user should be sent to
-       after completion of the current section.
-    b. Otherwise, the contents of the first column cell are used as the text of
-       a new question.
-  ii. If the first column is empty but the second is not, the row is a new choice:
-    a. The second column cell's contents are used as the text of a new choice
-       for the current question.
-    b. If the third column cell is non-empty, its contents are used as the name
-       of the section to send the user to if this choice is selected.
+
+  - If the first column is not empty, the row is either a new question or a GOTO:
+    - If the first column cell contents start with "GOTO", then the rest of the
+      cell should the name of a tab (section) that the user should be sent to
+      after completion of the current section.
+    - Otherwise, the contents of the first column cell are used as the text of
+      a new question.
+  - If the first column is empty but the second is not, the row is a new choice:
+    - The second column cell's contents are used as the text of a new choice
+      for the current question.
+    - If the third column cell is non-empty, its contents are used as the name
+      of the section to send the user to if this choice is selected.
+
+## App Script
+
+The App Script that builds the Forms document is attached to the Sheets document
+through the `Extensions / App Script` menu. The program is written in JavaScript
+and makes use of the Google Forms API documented here
+https://developers.google.com/apps-script/reference/forms.
+
+The script file is available in github as [app_script.js](app_script.js). The
+contents of this file can be pasted into the App Script window for the Sheets
+document. After pasting, the two ID strings at the top of the script will need
+to be updated.
