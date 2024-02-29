@@ -1,0 +1,1 @@
+This project contains the App Script (JavaScript) code for creating the Sunrise Homeless Navigation Center intake form from the contents of a Google Sheets document. The app script should be usable for other purposes simply by changing the document identifiers at the top to point at different sheets/forms.
