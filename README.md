@@ -2,8 +2,8 @@
 
 This project contains the App Script (JavaScript) code for creating the Sunrise
 Homeless Navigation Center intake form from the contents of a Google Sheets
-document. The app script should be usable for other purposes simply by changing
-the document identifiers at the top to point at different sheets/forms.
+document. The app script should be usable for other purposes by following the
+documentation below.
 
 # Motivation
 
@@ -15,48 +15,54 @@ links between sections.
 
 # Theory of Operation
 
-The script has hardcoded identifier strings that it uses to open the source
-Sheets document and the destination Forms document. The first step of the script
-is to remove all of the existing form elements. Then, the script iterates
-through each tab of the Sheets document, starting with the one named "Start
-Page". Each tab becomes a section in the Form with the same name as the tab, and
-a section can "point" to another by using its name, making it possible to
-support responses that direct the user to a specific next section.
+The script expects to be attached to a Google Sheets document that it will open
+through the Workspace API. The Sheets document must have a Named Range that
+contains the identifier of the target form, which the script will also open
+through the Workspace API.
+
+The first step of the script is to remove all of the existing form elements.
+Then, the script iterates through each tab of the Sheets document, and each tab
+becomes a section in the Form with the same name.  A section can "point" to
+another by its name, making it possible to support responses that direct the
+user to a specific next section.
 
 While the resulting Form document can be edited by hand, any need to do so
-should be considered a shortcoming of the generation script and/or the source
-Sheets document, and reported as an issue to the developer. Any manual changes
-would only persist until the next time the generator script is run.
+points to a shortcoming of the generation script and/or the source Sheets
+document. Any manual changes would only persist until the next time the
+generator script is run.
 
 # Sheets document setup
 
 The Sheets document must be organized correctly for the generator script to work
 properly.
 
-## Tabs
+## Form ID string
+
+The Sheets document must have a Named Range with name "FORMID" and consisting of
+a single cell. The contents of the cell will be used to open the target Form.
+
+## Tab organization
 
 The Sheets document must have one or more tabs, and the first tab must be named
-"Start Page". Each tab will become a section in the resulting form with the same
-name as the tab.
+"Start Page". Each tab will become a section in the resulting form.
 
-### Questions and choices
+### Tab contents
 
 The contents of each tab are interpreted by the script line-by-line, starting
-from the top row and working down.
+from the top row and working down. The first column of each row can contain
+either a directive or a comment. A comment is any text that begins with two
+slash ('/') characters. Rows that have an empty first column or a comment in the
+first column are ignored by the geneator. If not blank or a comment, the
+contents of the first column should be one of these directives:
 
-For each row:
-
-  - If the first column is not empty, the row is either a new question or a GOTO:
-    - If the first column cell contents start with "GOTO", then the rest of the
-      cell should the name of a tab (section) that the user should be sent to
-      after completion of the current section.
-    - Otherwise, the contents of the first column cell are used as the text of
-      a new question.
-  - If the first column is empty but the second is not, the row is a new choice:
-    - The second column cell's contents are used as the text of a new choice
-      for the current question.
-    - If the third column cell is non-empty, its contents are used as the name
-      of the section to send the user to if this choice is selected.
+| Directive | Interpretation |
+| --- | --- |
+| QUESTION | Begins a new question using the second cell contents |
+| CHOICE | Adds a choice to the current question, possibly with a GOTO |
+| TITLE | Sets the title of the section (or form if on Start Page) to the second cell contents |
+| DESCRIPTION | Sets the description of the section (or form if on Start Page) to the second cell contents |
+| CONFIRMATION | Sets the confirmation message shown after form submission |
+| GOTO | Sets the section the user should be taken to if not directed by a Choice |
 
 ## App Script
 
@@ -67,5 +73,4 @@ https://developers.google.com/apps-script/reference/forms.
 
 The script file is available in github as [app_script.js](app_script.js). The
 contents of this file can be pasted into the App Script window for the Sheets
-document. After pasting, the two ID strings at the top of the script will need
-to be updated.
+document.
