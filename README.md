@@ -41,6 +41,11 @@ properly.
 The Sheets document must have a Named Range with name "FORMID" and consisting of
 a single cell. The contents of the cell will be used to open the target Form.
 
+Given an example Google Forms editing URL of
+https://docs.google.com/forms/d/1cwhEGVsxbwHkM1ZMZq_zW9SZrkjDJmnb7X7XIgLRcdc/edit,
+the value of the `FORMID` range in the Sheet should be
+`1cwhEGVsxbwHkM1ZMZq_zW9SZrkjDJmnb7X7XIgLRcdc`.
+
 ## Tab organization
 
 The Sheets document must have one or more tabs, and the first tab must be named
